@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
-	"os/user"
 	"path/filepath"
 	"strings"
 
@@ -13,40 +12,45 @@ import (
 	"github.com/malyusha/algome/readme/generator"
 )
 
+const (
+	defaultProvidersCacheDir = "~/.algome/cache"
+	defaultOutputDir         = "./"
+)
+
 type Config struct {
-	OutputDirectory      string               `json:"output"`
-	SolutionsBaseDir     string               `json:"solutions_dir"`
+	OutputDirectory      string               `json:"output,omitempty"`
 	Structure            StructProviderConfig `json:"structure"`
 	ProblemSources       []string             `json:"sources"`
-	ProvidersCacheDir    string               `json:"problems_cache_dir"`
+	ProvidersCacheDir    string               `json:"problems_cache_dir,omitempty"`
 	OverloadTemplatesDir *string              `json:"templates_dir,omitempty"`
 
 	templates *generator.Templates
 }
 
-var DefaultConfig = CreateDefaultConfig()
-
-func CreateDefaultConfig() *Config {
-	cfg := &Config{
-		OutputDirectory:  "./",
-		SolutionsBaseDir: "./",
-		Structure: StructProviderConfig{
-			Catalog: &CatalogStructProviderConfig{
-				BaseDir: "./",
-			},
-		},
-		ProvidersCacheDir:    ".cache",
-		ProblemSources:       []string{providerLeetcode},
-		OverloadTemplatesDir: nil,
-		templates:            &generator.Templates{},
+func (c *Config) outputDir() string {
+	if c.OutputDirectory != "" {
+		return c.OutputDirectory
 	}
 
-	usr, err := user.Current()
-	if err == nil {
-		cfg.ProvidersCacheDir = filepath.Join(usr.HomeDir, ".algome/cache")
+	return defaultOutputDir
+}
+
+func (c *Config) providersCacheDir() string {
+	if c.ProvidersCacheDir != "" {
+		return c.ProvidersCacheDir
 	}
 
-	return cfg
+	return defaultProvidersCacheDir
+}
+
+func NewConfig() *Config {
+	return &Config{
+		templates: &generator.Templates{},
+	}
+}
+
+func (c *Config) SetTemplates(t *generator.Templates) {
+	c.templates = &generator.Templates{}
 }
 
 type FileReadmeConfig struct {
@@ -54,7 +58,7 @@ type FileReadmeConfig struct {
 }
 
 type CatalogStructProviderConfig struct {
-	MapAttribute string `json:"map_attr"`
+	MapAttribute string `json:"map_attr,omitempty"`
 	BaseDir      string `json:"base_dir"`
 }
 
@@ -62,34 +66,30 @@ type StructProviderConfig struct {
 	Catalog *CatalogStructProviderConfig `json:"catalog"`
 }
 
-func Load(configFile string) (*Config, error) {
-	cfg := *DefaultConfig
-
+func (c *Config) Load(configFile string) error {
 	if _, err := os.Stat(configFile); err == nil && !os.IsNotExist(err) {
 		b, err := os.ReadFile(configFile)
 		if err != nil {
-			return nil, fmt.Errorf("read config file error: %w", err)
+			return fmt.Errorf("read config file error: %w", err)
 		}
 
-		if err := json.Unmarshal(b, &cfg); err != nil {
-			return nil, fmt.Errorf("unmarshal config error: %w", err)
+		if err := json.Unmarshal(b, &c); err != nil {
+			return fmt.Errorf("unmarshal config error: %w", err)
 		}
-	} else {
-		logger.Warn("can't load configuration file. using default configuration")
 	}
 
-	err := generator.LoadTemplates(cfg.templates, generator.DefaultTemplates)
+	err := generator.LoadTemplates(c.templates, generator.DefaultTemplates)
 	if err != nil {
-		return nil, fmt.Errorf("failed to load templates")
+		return fmt.Errorf("failed to load templates")
 	}
 
-	if cfg.OverloadTemplatesDir != nil {
-		if err := overloadTemplates(*cfg.OverloadTemplatesDir, cfg.templates); err != nil {
+	if c.OverloadTemplatesDir != nil {
+		if err := overloadTemplates(*c.OverloadTemplatesDir, c.templates); err != nil {
 			logger.Error("failed to overload templates: %s", err.Error())
 		}
 	}
 
-	return &cfg, nil
+	return nil
 }
 
 func overloadTemplates(dir string, base *generator.Templates) error {

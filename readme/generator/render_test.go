@@ -25,7 +25,7 @@ func TestFileWriter_Write(t *testing.T) {
 		assert.Equal(t, int64(n), finfo.Size())
 	})
 
-	t.Run("appends to an existing file", func(t *testing.T) {
+	t.Run("not appends to an existing file", func(t *testing.T) {
 		w := &fileWriter{
 			filepath: "testdata/exists/readme.md",
 		}
@@ -52,8 +52,7 @@ func TestFileWriter_Write(t *testing.T) {
 		// check if file contents appended, not replaced
 		updatedFinfo, err := os.Stat("testdata/exists/readme.md")
 		assert.NoError(t, err)
-		assert.Equal(t, int64(len(initialFinfo))+int64(n), updatedFinfo.Size())
-
+		assert.Equal(t, int64(n), updatedFinfo.Size())
 	})
 }
 

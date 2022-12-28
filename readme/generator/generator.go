@@ -9,6 +9,7 @@ import (
 	"sort"
 
 	"github.com/malyusha/algome/logger"
+	"github.com/malyusha/algome/util"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
@@ -206,7 +207,7 @@ func (p *Provider) getProblemsFromCache() ([]Problem, error) {
 func NewProvider(name string, cacheDir string, base ProblemsProvider) Provider {
 	return Provider{
 		name:     name,
-		cacheDir: cacheDir,
+		cacheDir: util.WithUserHomeDir(cacheDir),
 		base:     base,
 	}
 }
