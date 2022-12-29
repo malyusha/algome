@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/caarlos0/log"
 	"github.com/malyusha/algome/readme"
 	"github.com/urfave/cli/v2"
 )
@@ -20,7 +21,7 @@ var GenerateCommand = &cli.Command{
 			return err
 		}
 
-		getLogger(ctx).Info("readme successfully generated")
+		log.Info("readme successfully generated")
 
 		return nil
 	},

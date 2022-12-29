@@ -1,11 +1,11 @@
 package cmd
 
 import (
-	"context"
 	"fmt"
 	"os"
 
-	"github.com/malyusha/algome/logger"
+	"github.com/caarlos0/log"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/malyusha/algome/readme"
 	"github.com/urfave/cli/v2"
 )
@@ -16,8 +16,11 @@ const (
 
 var (
 	configPath string
+	debug      bool
 	config     *readme.Config
 )
+
+var boldStyle = lipgloss.NewStyle().Bold(true)
 
 // The root command for `algome` is the alias for sub command `generate`.
 var app = &cli.App{
@@ -25,9 +28,10 @@ var app = &cli.App{
 	Usage:          "CLI to manage solved problems readme",
 	DefaultCommand: "generate",
 	Before: func(ctx *cli.Context) error {
-		log := logger.NewDefaultSimpleLogger(logger.LevelInfo)
-		logger.SetGlobalLogger(log)
-		ctx.Context = context.WithValue(ctx.Context, "logger", log)
+		if debug {
+			log.SetLevel(log.DebugLevel)
+			log.Debug("using debug logs")
+		}
 
 		config = CreateDefaultConfig()
 		configPath := ctx.String("config")
@@ -40,6 +44,12 @@ var app = &cli.App{
 		return nil
 	},
 	Flags: []cli.Flag{
+		&cli.BoolFlag{
+			Name:        "debug",
+			Required:    false,
+			Value:       false,
+			Destination: &debug,
+		},
 		&cli.StringFlag{
 			Name:        "config",
 			Required:    false,
@@ -67,10 +77,6 @@ func Execute() error {
 		fmt.Fprintln(app.ErrWriter, err.Error())
 	}
 	return nil
-}
-
-func getLogger(ctx *cli.Context) logger.Logger {
-	return ctx.Context.Value("logger").(logger.Logger)
 }
 
 func CreateDefaultConfig() *readme.Config {

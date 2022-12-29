@@ -36,7 +36,7 @@ func sourceProvidersFromConfig(cfg *Config) []generator.Provider {
 	for _, source := range cfg.ProblemSources {
 		sp, err := createSourceProvider(source)
 		if err != nil {
-			logger.Error("failed to create source provider: %s", err.Error())
+			logger.WithError(err).Error("failed to create source provider")
 			continue
 		}
 

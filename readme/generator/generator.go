@@ -157,7 +157,7 @@ func (p *Provider) GetAllProblems(ctx context.Context) ([]Problem, error) {
 	}
 
 	if err := p.writeProblemsToCache(problems); err != nil {
-		logger.Error(err.Error())
+		logger.WithError(err).Error("failed to write problems into cache")
 	}
 
 	return problems, nil
