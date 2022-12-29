@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/malyusha/algome/readme/generator"
+	"github.com/malyusha/algome/genreadme/generator"
 )
 
 type ProblemIdType string

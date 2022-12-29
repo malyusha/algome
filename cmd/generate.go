@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/caarlos0/log"
-	"github.com/malyusha/algome/readme"
+	"github.com/malyusha/algome/genreadme"
 	"github.com/urfave/cli/v2"
 )
 
@@ -13,7 +13,7 @@ var GenerateCommand = &cli.Command{
 	Name:        "generate",
 	Description: "Generates new readme",
 	Action: func(ctx *cli.Context) error {
-		gen, err := readme.NewGenerator(config)
+		gen, err := genreadme.NewGenerator(config)
 		if err != nil {
 			return fmt.Errorf("failed to create generator: %w", err)
 		}
