@@ -1,4 +1,4 @@
-package genreadme
+package readme
 
 import (
 	"encoding/json"
@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/malyusha/algome/genreadme/generator"
 	"github.com/malyusha/algome/logger"
+	"github.com/malyusha/algome/readme/generator"
 )
 
 const (

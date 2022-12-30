@@ -6,7 +6,7 @@ import (
 
 	"github.com/caarlos0/log"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/malyusha/algome/genreadme"
+	"github.com/malyusha/algome/readme"
 	"github.com/urfave/cli/v2"
 )
 
@@ -17,7 +17,7 @@ const (
 var (
 	configPath string
 	debug      bool
-	config     *genreadme.Config
+	config     *readme.Config
 )
 
 var boldStyle = lipgloss.NewStyle().Bold(true)
@@ -79,14 +79,14 @@ func Execute() error {
 	return nil
 }
 
-func CreateDefaultConfig() *genreadme.Config {
-	cfg := genreadme.NewConfig()
-	cfg.Structure = genreadme.StructProviderConfig{
-		Catalog: &genreadme.CatalogStructProviderConfig{
+func CreateDefaultConfig() *readme.Config {
+	cfg := readme.NewConfig()
+	cfg.Structure = readme.StructProviderConfig{
+		Catalog: &readme.CatalogStructProviderConfig{
 			BaseDir: "./",
 		},
 	}
-	cfg.ProblemSources = []string{genreadme.ProviderLeetcode}
+	cfg.ProblemSources = []string{readme.ProviderLeetcode}
 
 	return cfg
 }
