@@ -44,7 +44,7 @@ sudo chmod +x /usr/local/bin/algome
 
 ### Windows
 
-Download the latest Windows .gz archive from []
+Download the latest Windows .gz archive from [Releases page](https://github.com/malyusha/algome/releases)
 
 ## Definitions
 
