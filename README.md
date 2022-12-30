@@ -35,7 +35,7 @@ sudo chmod +x /usr/local/bin/algome
 
 ```shell
 # Extract the archive
-tar xf algome_0.0.1_darvin_x86_64.tar.gz
+tar xf algome_0.0.1_darwin_x86_64.tar.gz
 # Move the binary
 sudo mv algome /usr/local/bin
 # Set permissions
