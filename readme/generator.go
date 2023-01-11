@@ -26,9 +26,19 @@ func newGeneratorFromConfig(cfg *Config) (*generator.Generator, error) {
 
 	providers := sourceProvidersFromConfig(cfg)
 
-	gen := generator.NewGenerator(cfg.outputDir(), cfg.templates, structProvider, providers)
+	opts := createOptions(cfg)
+	gen := generator.NewGenerator(cfg.outputDir(), cfg.templates, structProvider, providers, opts...)
 
 	return gen, nil
+}
+
+func createOptions(cfg *Config) []generator.Option {
+	opts := make([]generator.Option, 0)
+
+	if cfg.HideUnsolvedProblems {
+		opts = append(opts, generator.HideUnsolvedProblems())
+	}
+	return opts
 }
 
 func sourceProvidersFromConfig(cfg *Config) []generator.Provider {

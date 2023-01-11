@@ -36,7 +36,7 @@ func TestSourceTemplate(t *testing.T) {
 				{
 					Filename: "solution",
 					Filepath: "test/solution.go",
-					Lang:     LangGo,
+					Lang:     "Go",
 				},
 			},
 			IsSolved: true,
@@ -54,7 +54,7 @@ func TestSourceTemplate(t *testing.T) {
 				{
 					Filename: "solution",
 					Filepath: "test/solution.go",
-					Lang:     LangGo,
+					Lang:     "Go",
 				},
 			},
 			IsSolved: true,

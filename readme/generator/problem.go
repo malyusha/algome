@@ -3,6 +3,8 @@ package generator
 import (
 	"path/filepath"
 	"strings"
+
+	"github.com/malyusha/algome/logger"
 )
 
 type difficulty int8
@@ -64,6 +66,7 @@ func (p *Problem) applySolution(s Solution) Problem {
 func (p *Problem) addSolution(path string) {
 	supported, lang := langFromPath(path)
 	if !supported {
+		logger.WithField("ext", lang).Warn("unknown file extension of solution. file was skipped from readme")
 		return
 	}
 

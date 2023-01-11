@@ -79,6 +79,7 @@ type StructureProvider interface {
 
 // Generator is the main structure responsible for readme generation from different sources of problems.
 type Generator struct {
+	hideUnsolved      bool
 	outputDir         string
 	templates         *Templates
 	structureProvider StructureProvider
@@ -91,13 +92,20 @@ func NewGenerator(
 	templates *Templates,
 	sp StructureProvider,
 	pp []Provider,
+	options ...Option,
 ) *Generator {
-	return &Generator{
+	gen := &Generator{
 		outputDir:         outputDir,
 		templates:         templates,
 		structureProvider: sp,
 		problemsProvider:  pp,
 	}
+
+	for _, o := range options {
+		o(gen)
+	}
+
+	return gen
 }
 
 type GenerationResult struct {
@@ -132,8 +140,6 @@ func (g *Generator) generateProviderReadme(ctx context.Context, provider Provide
 		return fmt.Errorf("generateProviderReadme: %w", err)
 	}
 
-	sort.Slice(allProblems, func(i, j int) bool { return allProblems[i].ID < allProblems[j].ID })
-
 	solutions, err := g.structureProvider.GetSolvedProblems(ctx, provider.name)
 	if err != nil {
 		return fmt.Errorf("generateProviderReadme: %w", err)
@@ -157,6 +163,12 @@ func (g *Generator) generateProviderReadme(ctx context.Context, provider Provide
 		allProblems[ix] = problem.applySolution(s)
 	}
 
+	if g.hideUnsolved {
+		// remove all unsolved problems from readme file if option is set.
+		allProblems = util.Filter(allProblems, func(p Problem) bool { return p.IsSolved })
+	}
+
+	sort.Slice(allProblems, func(i, j int) bool { return allProblems[i].ID < allProblems[j].ID })
 	source := Source{
 		Name:  cases.Title(language.English, cases.Compact).String(provider.name),
 		Stats: newStats(allProblems),

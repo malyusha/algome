@@ -5,26 +5,42 @@ import (
 	"strings"
 )
 
-const (
-	LangGo         = "Go"
-	LangPython     = "Python"
-	LangJavascript = "JS"
-	LangCpp        = "C++"
-	LangPhp        = "PHP"
+var langExtDefinitions = []string{
+	"Go|go",
+	"Python|py",
+	"JS|js",
+	"TS|ts",
+	"C++|cpp",
+	"PHP|php",
+	"C|c",
+	"C#|cs",
+	"Swift|swift",
+	"Java|java",
+	"Kotlin|kt",
+	"Rust|rs",
+	"Ruby|rb",
+	"Racket|rkt",
+	"Dart|dart",
+	"Scala|scala|sc",
+}
 
-	ExtGo     = "go"
-	ExtPython = "py"
-	ExtJS     = "js"
-	ExtCpp    = "cpp"
-	ExtPhp    = "php"
-)
+var extToLang map[string]string
 
-var extToLang = map[string]string{
-	ExtGo:     LangGo,
-	ExtPython: LangPython,
-	ExtJS:     LangJavascript,
-	ExtCpp:    LangCpp,
-	ExtPhp:    LangPhp,
+func init() {
+	extToLang = buildLangsMap(langExtDefinitions)
+}
+
+func buildLangsMap(defs []string) map[string]string {
+	out := make(map[string]string, len(defs))
+	// load all languages and their possible extensions into map[extension]language_title.
+	for _, def := range defs {
+		parts := strings.Split(def, "|")
+		for i := 1; i < len(parts); i++ {
+			out[parts[i]] = parts[0]
+		}
+	}
+
+	return out
 }
 
 func langFromPath(filename string) (bool, string) {
