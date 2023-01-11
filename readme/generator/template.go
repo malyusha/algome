@@ -28,7 +28,7 @@ var TplSourceMarkdown = `# {{ .Name }} problems
 {{- with .Stats }}
 {{- range groupByLevel . }}
 <details>
-	<summary>{{ title .Title }} - {{ .Stats.SolvedPercent }}% [{{ .Stats.Solved }} / {{ .Stats.Total }}]</summary>
+	<summary>{{ title .Title }} - {{ .Stats.SolvedPercentString }}% [{{ .Stats.Solved }} / {{ .Stats.Total }}]</summary>
 {{ range .Stats.Problems }} 
 {{.ID}}. [{{.Title}}]({{.URL}}) 
 {{- if .IsSolved }} 
