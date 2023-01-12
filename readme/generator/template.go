@@ -18,10 +18,12 @@ var DefaultTemplates = map[string]string{
 	TplSourceMarkdownName: TplSourceMarkdown,
 }
 
-var TplIndexMarkdown = `# All problems
+var TplIndexMarkdown = `# Sources
 {{- range . }}
-[{{ .Title }}]({{ .Path }})
+## [{{ .Title }}]({{ .Path }})
 {{- end }}
+
+Readme generated using [algome](https://github.com/malyusha/algome).
 `
 
 var TplSourceMarkdown = `# {{ .Name }} problems
@@ -29,8 +31,8 @@ var TplSourceMarkdown = `# {{ .Name }} problems
 {{- range groupByLevel . }}
 <details>
 	<summary>{{ title .Title }} - {{ .Stats.SolvedPercentString }}% [{{ .Stats.Solved }} / {{ .Stats.Total }}]</summary>
-{{ range .Stats.Problems }} 
-{{.ID}}. [{{.Title}}]({{.URL}}) 
+{{ range $i, $p := .Stats.Problems }} 
+{{inc $i}}. [{{.ID}}. {{.Title}}]({{.URL}}) 
 {{- if .IsSolved }} 
 {{- range .Solutions }}
 	* [{{.Lang}}]({{.Filepath}})
@@ -61,6 +63,9 @@ func LoadTemplates(out *Templates, list map[string]string) error {
 		"title": func(s string) string {
 			return cases.Title(language.English, cases.Compact).String(s)
 		},
+		"inc": func(i int) int {
+			return i + 1
+		},
 	}
 	for name, text := range list {
 		parsed, err := template.New(name).Funcs(funcs).Parse(text)
@@ -89,7 +94,7 @@ type ProblemsGroup struct {
 
 func GroupByLevel(s Stats) []ProblemsGroup {
 	groupsMap := make(map[difficulty]Stats)
-	for _, p := range s.Problems {
+	for _, p := range s.problems {
 		diff := p.Difficulty
 		stats := groupsMap[diff]
 		stats.add(p)
@@ -102,6 +107,7 @@ func GroupByLevel(s Stats) []ProblemsGroup {
 		if _, ok := groupsMap[diff]; !ok {
 			continue
 		}
+
 		group := ProblemsGroup{
 			Title: diff.String(),
 			Stats: groupsMap[diff],

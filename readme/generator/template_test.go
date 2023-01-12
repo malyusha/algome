@@ -74,7 +74,7 @@ func TestSourceTemplate(t *testing.T) {
 
 	source := Source{
 		Name:  "Test",
-		Stats: newStats(problems),
+		Stats: newStats(false, problems),
 	}
 
 	templates := &Templates{}
