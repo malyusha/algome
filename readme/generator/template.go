@@ -31,18 +31,15 @@ var TplSourceMarkdown = `# {{ .Name }} problems
 {{- range groupByLevel . }}
 <details>
 	<summary>{{ title .Title }} - {{ .Stats.SolvedPercentString }}% [{{ .Stats.Solved }} / {{ .Stats.Total }}]</summary>
-{{ range $i, $p := .Stats.Problems }} 
-{{inc $i}}. [{{.ID}}. {{.Title}}]({{.URL}}) 
-{{- if .IsSolved }} 
-{{- range .Solutions }}
-	* [{{.Lang}}]({{.Filepath}})
-{{- end }}
+{{ range $i, $p := .Stats.Problems }}
+{{inc $i}}. [{{.ID}}. {{.Title}}]({{.URL}})
+{{- if .IsSolved }}
+{{- $l := len .Solutions }} ({{ range $ix, $s := .Solutions }}[{{.Lang}}]({{.Filepath}}){{ if ne (sub $l) $ix}}, {{ end }}) {{- end }}
 {{- end -}}
 {{- end }}
 </details>
 {{- end }}
-{{- end }}
-`
+{{- end }}`
 
 type Templates struct {
 	Source, Index *template.Template
@@ -62,6 +59,9 @@ func LoadTemplates(out *Templates, list map[string]string) error {
 		"groupByLevel": GroupByLevel,
 		"title": func(s string) string {
 			return cases.Title(language.English, cases.Compact).String(s)
+		},
+		"sub": func(i int) int {
+			return i - 1
 		},
 		"inc": func(i int) int {
 			return i + 1

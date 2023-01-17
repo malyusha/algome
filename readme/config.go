@@ -105,7 +105,7 @@ func overloadTemplates(dir string, base *generator.Templates) error {
 		ext := filepath.Ext(filename)
 		name := strings.TrimSuffix(filename, ext)
 
-		fileContents, err := os.ReadFile(info.Name())
+		fileContents, err := os.ReadFile(path)
 		if err != nil {
 			return fmt.Errorf("ReadFile error: %w", err)
 		}
