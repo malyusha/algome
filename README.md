@@ -3,6 +3,49 @@
 This is the CLI tool to generate readme with structure of solved algorithmic problems of different
 sources.
 
+## Installation
+
+### Install the latest version using Go
+
+`go get github.com/malyusha/algome`
+
+### Linux
+
+* Download the latest Linux .gz archive
+  from [Releases page](https://github.com/malyusha/algome/relases)
+* Extract the archive
+* Move binary to desired directory (used in $PATH env variable)
+* Set "execute" permissions for the binary
+
+```shell
+# Extract the archive
+tar xf algome_0.5.0_linux_x86_64.tar.gz
+# Move the binary
+sudo mv algome /usr/local/bin
+# Set permissions
+sudo chmod +x /usr/local/bin/algome
+```
+
+### MacOS
+
+* Download the latest macOS archive from [Releases page](https://github.com/malyusha/algome/relases)
+* Extract the archive
+* Move binary to desired directory (used in $PATH env variable)
+* Set "execute" permissions for the binary
+
+```shell
+# Extract the archive
+tar xf algome_0.5.0_linux_x86_64.tar.gz
+# Move the binary
+sudo mv algome /usr/local/bin
+# Set permissions
+sudo chmod +x /usr/local/bin/algome
+```
+
+### Windows
+
+Download the latest Windows .gz archive from []
+
 ## Definitions
 
 * `Source provider` - source of problems (e.g. list of problems from LeetCode). Source provider is

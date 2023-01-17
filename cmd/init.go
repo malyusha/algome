@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/caarlos0/log"
+	"github.com/malyusha/algome/logger"
 	"github.com/urfave/cli/v2"
 )
 
@@ -12,12 +14,15 @@ var InitCommand = &cli.Command{
 	Name:        "init",
 	Description: "Initializes project",
 	Action: func(ctx *cli.Context) error {
-		_, err := os.Stat(ctx.String("config"))
+		filename := ctx.String("config")
+		_, err := os.Stat(filename)
 		if os.IsNotExist(err) {
-			return createConfigFile(ctx)
+			logger.WithField("file", filename).Info(boldStyle.Render("creating config file"))
+			return createConfigFile()
 		}
 
 		if err == nil {
+			logger.Info(boldStyle.Render("configuration already initialized"))
 			return nil
 		}
 
@@ -25,7 +30,7 @@ var InitCommand = &cli.Command{
 	},
 }
 
-func createConfigFile(ctx *cli.Context) error {
+func createConfigFile() error {
 	file, err := os.Create(configPath)
 	if err != nil {
 		return fmt.Errorf("failed to create configuration file: %w", err)
@@ -37,6 +42,6 @@ func createConfigFile(ctx *cli.Context) error {
 		return fmt.Errorf("failed to encode config to JSON: %w", err)
 	}
 
-	getLogger(ctx).Info("configuration file successfully created")
+	log.Info("configuration file successfully created")
 	return nil
 }

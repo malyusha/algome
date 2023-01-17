@@ -85,7 +85,7 @@ func (c *Config) Load(configFile string) error {
 
 	if c.OverloadTemplatesDir != nil {
 		if err := overloadTemplates(*c.OverloadTemplatesDir, c.templates); err != nil {
-			logger.Error("failed to overload templates: %s", err.Error())
+			logger.WithError(err).Error("failed to overload templates")
 		}
 	}
 

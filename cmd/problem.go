@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/caarlos0/log"
 	"github.com/urfave/cli/v2"
 )
 
@@ -17,7 +18,7 @@ var ProblemAddCommand = &cli.Command{
 	Usage: "add new problem to solved list",
 	Action: func(ctx *cli.Context) error {
 		// todo:
-		getLogger(ctx).Info("adding new problem")
+		log.Info(boldStyle.Render("adding new problem"))
 		return nil
 	},
 }
