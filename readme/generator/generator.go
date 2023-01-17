@@ -26,24 +26,33 @@ type Source struct {
 }
 
 type Stats struct {
-	Problems []Problem
-	Solved   int64
+	hideUnsolved bool
+	problems     []Problem
+	Solved       int64
 }
 
 func (s Stats) Total() int {
-	return len(s.Problems)
+	return len(s.problems)
 }
 
 func (s *Stats) add(p Problem) {
-	s.Problems = append(s.Problems, p)
-
+	s.problems = append(s.problems, p)
 	if p.IsSolved {
 		s.Solved++
 	}
 }
 
-func newStats(problems []Problem) Stats {
-	stats := Stats{}
+func (s Stats) Problems() []Problem {
+	if s.hideUnsolved {
+		return util.Filter(s.problems, func(p Problem) bool { return p.IsSolved })
+	}
+	return s.problems
+}
+
+func newStats(hideUnsolved bool, problems []Problem) Stats {
+	stats := Stats{
+		hideUnsolved: hideUnsolved,
+	}
 	for _, p := range problems {
 		stats.add(p)
 	}
@@ -55,7 +64,7 @@ func (s Stats) SolvedPercentString() string {
 		return "0"
 	}
 
-	res := float64(s.Solved*100) / float64(len(s.Problems))
+	res := float64(s.Solved*100) / float64(s.Total())
 
 	if math.Mod(res, 1.0) == 0 {
 		return strconv.Itoa(int(res))
@@ -175,15 +184,18 @@ func (g *Generator) generateProviderReadme(ctx context.Context, provider Provide
 		allProblems[ix] = problem.applySolution(s)
 	}
 
+	stats := newStats(g.hideUnsolved, allProblems)
 	if g.hideUnsolved {
 		// remove all unsolved problems from readme file if option is set.
 		allProblems = util.Filter(allProblems, func(p Problem) bool { return p.IsSolved })
 	}
 
 	sort.Slice(allProblems, func(i, j int) bool { return allProblems[i].ID < allProblems[j].ID })
+
+	stats.hideUnsolved = g.hideUnsolved
 	source := Source{
 		Name:  cases.Title(language.English, cases.Compact).String(provider.name),
-		Stats: newStats(allProblems),
+		Stats: stats,
 	}
 
 	fw := newFileWriter(filepath.Join(g.outputDir, provider.name, readmeFilename))

@@ -85,6 +85,7 @@ Let's look at each property of the configuration.
 | `sources`            | `[]string` | Array of source names that are supported. For each of source separated readme is generated inside solutions directory. See [supported sources](#Supported sources for readme generation) | `["leetcode"]`  |
 | `problems_cache_dir` | `string`   | Directory, where the cached problems of source are stored as JSON                                                                                                                        | ~/.algome/cache |
 | `templates_dir`      | `string`   | Templates directory. Allows to override markdown templates for readme files. See [supported templates](#Override templates).                                                             | null            |
+| `hide_unsolved`      | `bool`     | Removes unsolved problems from final README of each source. Keeps only solved problems, listed for each source.                                                                          | `false`         |
 
 ## Usage
 
@@ -112,14 +113,18 @@ used:
 $ algome init
 ```
 
-### `generate`
+### `generate [--hide-unsolved]`
 
 Generate readme files from available sources, specified in configuration.
+
+#### Flags
+
+* **`hide-unsolved`** - keeps only solved problems in final README of each source.
 
 **Example**
 
 ```
-$ algome [generate]
+$ algome generate
 ```
 
 ## Supported sources for readme generation
