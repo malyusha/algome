@@ -3,6 +3,9 @@ package generator
 import (
 	"fmt"
 	"text/template"
+
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 const (
@@ -22,15 +25,20 @@ var TplIndexMarkdown = `# All problems
 `
 
 var TplSourceMarkdown = `# {{ .Name }} problems
-{{- with .Problems }}
-	{{- range . }} 
-		{{.ID}}. [{{.Title}}]({{.URL}}) 
-		{{- if .IsSolved }} 
-			{{- range .Solutions }}
-			* [{{.Lang}}]({{.Filepath}}) 
-			{{- end }}
-		{{- end }}
-	{{- end }}
+{{- with .Stats }}
+{{- range $difficulty, $levelStats := groupByLevel . }}
+{{- with $levelStats }}
+## {{ title $difficulty }} - {{ .SolvedPercent }}% [{{ .Solved }} / {{ .Total }}]
+{{- range .Problems }} 
+	{{.ID}}. [{{.Title}}]({{.URL}}) 
+{{- if .IsSolved }} 
+{{- range .Solutions }}
+		* [{{.Lang}}]({{.Filepath}})
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
 {{- end }}
 `
 
@@ -48,8 +56,14 @@ func LoadTemplates(out *Templates, list map[string]string) error {
 		return fmt.Errorf("nil templates provided")
 	}
 
+	funcs := template.FuncMap{
+		"groupByLevel": GroupByLevel,
+		"title": func(s string) string {
+			return cases.Title(language.English, cases.Compact).String(s)
+		},
+	}
 	for name, text := range list {
-		parsed, err := template.New(name).Parse(text)
+		parsed, err := template.New(name).Funcs(funcs).Parse(text)
 		if err != nil {
 			return fmt.Errorf("failed to parse template '%s': %w", name, err)
 		}
@@ -66,4 +80,16 @@ type OverloadTemplate func(parsed *template.Template, t *Templates)
 var templateSetters = map[string]OverloadTemplate{
 	TplSourceMarkdownName: func(parsed *template.Template, t *Templates) { t.Source = parsed },
 	TplIndexMarkdownName:  func(parsed *template.Template, t *Templates) { t.Index = parsed },
+}
+
+func GroupByLevel(s Stats) map[string]Stats {
+	groups := make(map[string]Stats)
+	for _, p := range s.Problems {
+		diff := p.Difficulty.String()
+		stats := groups[diff]
+		stats.add(p)
+		groups[diff] = stats
+	}
+
+	return groups
 }

@@ -1,17 +1,15 @@
+//go:build !windows
+
 package util
 
 import (
 	"os/user"
 	"path/filepath"
-	"runtime"
 	"strings"
 )
 
 // WithUserHomeDir returns path where `~` is replaced with user HOME dir.
 func WithUserHomeDir(path string) string {
-	if runtime.GOOS == "windows" {
-		return path
-	}
 	usr, _ := user.Current()
 	dir := usr.HomeDir
 	if path == "~" {

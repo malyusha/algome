@@ -15,12 +15,41 @@ import (
 )
 
 const (
-	readmeFilename = "readme.md"
+	readmeFilename = "README.md"
 )
 
 type Source struct {
-	Name     string
+	Name  string
+	Stats Stats
+}
+
+type Stats struct {
 	Problems []Problem
+	Solved   int64
+}
+
+func (s Stats) Total() int {
+	return len(s.Problems)
+}
+
+func (s *Stats) add(p Problem) {
+	s.Problems = append(s.Problems, p)
+
+	if p.IsSolved {
+		s.Solved++
+	}
+}
+
+func newStats(problems []Problem) Stats {
+	stats := Stats{}
+	for _, p := range problems {
+		stats.add(p)
+	}
+	return stats
+}
+
+func (s Stats) SolvedPercent() float64 {
+	return float64(s.Solved*100) / float64(len(s.Problems))
 }
 
 // ProblemsProvider - source of single source of algorithmic problems.
@@ -129,8 +158,8 @@ func (g *Generator) generateProviderReadme(ctx context.Context, provider Provide
 	}
 
 	source := Source{
-		Name:     cases.Title(language.English, cases.Compact).String(provider.name),
-		Problems: allProblems,
+		Name:  cases.Title(language.English, cases.Compact).String(provider.name),
+		Stats: newStats(allProblems),
 	}
 
 	fw := newFileWriter(filepath.Join(g.outputDir, provider.name, readmeFilename))
