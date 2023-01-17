@@ -26,18 +26,18 @@ var TplIndexMarkdown = `# All problems
 
 var TplSourceMarkdown = `# {{ .Name }} problems
 {{- with .Stats }}
-{{- range $difficulty, $levelStats := groupByLevel . }}
-{{- with $levelStats }}
-## {{ title $difficulty }} - {{ .SolvedPercent }}% [{{ .Solved }} / {{ .Total }}]
-{{- range .Problems }} 
-	{{.ID}}. [{{.Title}}]({{.URL}}) 
+{{- range groupByLevel . }}
+<details>
+	<summary>{{ title .Title }} - {{ .Stats.SolvedPercent }}% [{{ .Stats.Solved }} / {{ .Stats.Total }}]</summary>
+{{ range .Stats.Problems }} 
+{{.ID}}. [{{.Title}}]({{.URL}}) 
 {{- if .IsSolved }} 
 {{- range .Solutions }}
-		* [{{.Lang}}]({{.Filepath}})
+	* [{{.Lang}}]({{.Filepath}})
 {{- end }}
+{{- end -}}
 {{- end }}
-{{- end }}
-{{- end }}
+</details>
 {{- end }}
 {{- end }}
 `
@@ -82,14 +82,32 @@ var templateSetters = map[string]OverloadTemplate{
 	TplIndexMarkdownName:  func(parsed *template.Template, t *Templates) { t.Index = parsed },
 }
 
-func GroupByLevel(s Stats) map[string]Stats {
-	groups := make(map[string]Stats)
+type ProblemsGroup struct {
+	Title string
+	Stats Stats
+}
+
+func GroupByLevel(s Stats) []ProblemsGroup {
+	groupsMap := make(map[difficulty]Stats)
 	for _, p := range s.Problems {
-		diff := p.Difficulty.String()
-		stats := groups[diff]
+		diff := p.Difficulty
+		stats := groupsMap[diff]
 		stats.add(p)
-		groups[diff] = stats
+		groupsMap[diff] = stats
 	}
 
-	return groups
+	order := []difficulty{DifficultyEasy, DifficultyMedium, DifficultyHard}
+	out := make([]ProblemsGroup, 0, len(groupsMap))
+	for _, diff := range order {
+		if _, ok := groupsMap[diff]; !ok {
+			continue
+		}
+		group := ProblemsGroup{
+			Title: diff.String(),
+			Stats: groupsMap[diff],
+		}
+
+		out = append(out, group)
+	}
+	return out
 }

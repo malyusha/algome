@@ -18,6 +18,7 @@ const (
 )
 
 type Config struct {
+	HideUnsolvedProblems bool                 `json:"hide_unsolved"`
 	OutputDirectory      string               `json:"output,omitempty"`
 	Structure            StructProviderConfig `json:"structure"`
 	ProblemSources       []string             `json:"sources"`
