@@ -4,9 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"math"
 	"os"
 	"path/filepath"
 	"sort"
+	"strconv"
 
 	"github.com/malyusha/algome/logger"
 	"github.com/malyusha/algome/util"
@@ -48,8 +50,18 @@ func newStats(problems []Problem) Stats {
 	return stats
 }
 
-func (s Stats) SolvedPercent() float64 {
-	return float64(s.Solved*100) / float64(len(s.Problems))
+func (s Stats) SolvedPercentString() string {
+	if s.Solved == 0 {
+		return "0"
+	}
+
+	res := float64(s.Solved*100) / float64(len(s.Problems))
+
+	if math.Mod(res, 1.0) == 0 {
+		return strconv.Itoa(int(res))
+	}
+
+	return fmt.Sprintf("%.2f", res)
 }
 
 // ProblemsProvider - source of single source of algorithmic problems.
