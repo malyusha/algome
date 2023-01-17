@@ -19,7 +19,7 @@ var (
 	config     *readme.Config
 )
 
-// The root command (`qrcp`) is like a shortcut of the `send` command
+// The root command for `algome` is the alias for sub command `generate`.
 var app = &cli.App{
 	Name:           "algome",
 	Usage:          "CLI to manage solved problems readme",
