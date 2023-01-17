@@ -1,13 +1,13 @@
-package readme
+package genreadme
 
 import (
 	"errors"
 	"fmt"
 
+	"github.com/malyusha/algome/genreadme/generator"
+	"github.com/malyusha/algome/genreadme/sourceproviders"
+	"github.com/malyusha/algome/genreadme/structproviders"
 	"github.com/malyusha/algome/logger"
-	"github.com/malyusha/algome/readme/generator"
-	"github.com/malyusha/algome/readme/sourceproviders"
-	"github.com/malyusha/algome/readme/structproviders"
 )
 
 const (
