@@ -96,6 +96,15 @@ func (c *Config) Load(configFile string) error {
 func overloadTemplates(dir string, base *generator.Templates) error {
 	overloadList := make(map[string]string)
 	err := filepath.Walk(dir, func(path string, info fs.FileInfo, err error) error {
+		if err != nil {
+			if os.IsNotExist(err) {
+				logger.WithField("dir", dir).Error("templates directory does not exist")
+				return nil
+			}
+
+			return err
+		}
+
 		if info.IsDir() {
 			// skip directories
 			return nil
