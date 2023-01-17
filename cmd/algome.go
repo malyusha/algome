@@ -27,6 +27,12 @@ var app = &cli.App{
 	Name:           "algome",
 	Usage:          "CLI to manage solved problems readme",
 	DefaultCommand: "generate",
+	Commands: cli.Commands{
+		VersionCommand,
+		GenerateCommand,
+		InitCommand,
+		ProblemCommand,
+	},
 	Before: func(ctx *cli.Context) error {
 		if debug {
 			log.SetLevel(log.DebugLevel)
@@ -62,14 +68,6 @@ var app = &cli.App{
 			},
 		},
 	},
-}
-
-func init() {
-	app.Commands = []*cli.Command{
-		GenerateCommand,
-		InitCommand,
-		ProblemCommand,
-	}
 }
 
 func Execute() error {
