@@ -12,7 +12,7 @@ sources.
 ### Linux
 
 * Download the latest Linux .gz archive
-  from [Releases page](https://github.com/malyusha/algome/relases)
+  from [Releases page](https://github.com/malyusha/algome/releases)
 * Extract the archive
 * Move binary to desired directory (used in $PATH env variable)
 * Set "execute" permissions for the binary
@@ -28,7 +28,7 @@ sudo chmod +x /usr/local/bin/algome
 
 ### MacOS
 
-* Download the latest macOS archive from [Releases page](https://github.com/malyusha/algome/relases)
+* Download the latest macOS archive from [Releases page](https://github.com/malyusha/algome/releases)
 * Extract the archive
 * Move binary to desired directory (used in $PATH env variable)
 * Set "execute" permissions for the binary
