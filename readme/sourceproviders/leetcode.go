@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/malyusha/algome/genreadme/generator"
+	"github.com/malyusha/algome/readme/generator"
 )
 
 const (

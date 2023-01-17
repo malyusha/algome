@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/malyusha/algome/genreadme/generator"
+	"github.com/malyusha/algome/readme/generator"
 	"github.com/stretchr/testify/assert"
 )
 
