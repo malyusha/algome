@@ -184,13 +184,8 @@ func (g *Generator) generateProviderReadme(ctx context.Context, provider Provide
 		allProblems[ix] = problem.applySolution(s)
 	}
 
-	stats := newStats(g.hideUnsolved, allProblems)
-	if g.hideUnsolved {
-		// remove all unsolved problems from readme file if option is set.
-		allProblems = util.Filter(allProblems, func(p Problem) bool { return p.IsSolved })
-	}
-
 	sort.Slice(allProblems, func(i, j int) bool { return allProblems[i].ID < allProblems[j].ID })
+	stats := newStats(g.hideUnsolved, allProblems)
 
 	stats.hideUnsolved = g.hideUnsolved
 	source := Source{
