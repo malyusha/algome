@@ -96,7 +96,10 @@ func GroupByLevel(s Stats) []ProblemsGroup {
 	groupsMap := make(map[difficulty]Stats)
 	for _, p := range s.problems {
 		diff := p.Difficulty
-		stats := groupsMap[diff]
+		stats, ok := groupsMap[diff]
+		if !ok {
+			stats.hideUnsolved = s.hideUnsolved
+		}
 		stats.add(p)
 		groupsMap[diff] = stats
 	}
