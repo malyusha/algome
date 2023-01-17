@@ -11,15 +11,10 @@ import (
 )
 
 const (
-	providerLeetcode = "leetcode"
+	ProviderLeetcode = "leetcode"
 )
 
-func NewGenerator(configFile string) (*generator.Generator, error) {
-	cfg, err := Load(configFile)
-	if err != nil {
-		return nil, fmt.Errorf("load config error: %w", err)
-	}
-
+func NewGenerator(cfg *Config) (*generator.Generator, error) {
 	return newGeneratorFromConfig(cfg)
 }
 
@@ -31,7 +26,7 @@ func newGeneratorFromConfig(cfg *Config) (*generator.Generator, error) {
 
 	providers := sourceProvidersFromConfig(cfg)
 
-	gen := generator.NewGenerator(cfg.OutputDirectory, cfg.templates, structProvider, providers)
+	gen := generator.NewGenerator(cfg.outputDir(), cfg.templates, structProvider, providers)
 
 	return gen, nil
 }
@@ -45,7 +40,7 @@ func sourceProvidersFromConfig(cfg *Config) []generator.Provider {
 			continue
 		}
 
-		namedProvider := generator.NewProvider(source, cfg.ProvidersCacheDir, sp)
+		namedProvider := generator.NewProvider(source, cfg.providersCacheDir(), sp)
 		out = append(out, namedProvider)
 	}
 
@@ -54,7 +49,7 @@ func sourceProvidersFromConfig(cfg *Config) []generator.Provider {
 
 func createSourceProvider(source string) (generator.ProblemsProvider, error) {
 	switch source {
-	case providerLeetcode:
+	case ProviderLeetcode:
 		return sourceproviders.NewLeetcodeProvider()
 	}
 

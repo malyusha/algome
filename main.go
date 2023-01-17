@@ -7,10 +7,7 @@ import (
 )
 
 func main() {
-	var command string
-	args := os.Args[1:]
-	if len(args) != 0 {
-		command = args[0]
+	if err := cmd.Execute(); err != nil {
+		os.Exit(1)
 	}
-	cmd.Execute(command)
 }

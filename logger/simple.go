@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strings"
 )
 
 type logLevel int8
@@ -38,9 +37,9 @@ type simpleLogger struct {
 	output io.StringWriter
 }
 
-func NewDefaultSimpleLogger() *simpleLogger {
+func NewDefaultSimpleLogger(level logLevel) *simpleLogger {
 	return &simpleLogger{
-		level:  LevelDebug,
+		level:  level,
 		output: os.Stdout,
 	}
 }
@@ -77,8 +76,6 @@ func (s *simpleLogger) write(msg string, level logLevel, args ...any) {
 	if s.level > level {
 		return
 	}
-
-	msg = fmt.Sprintf("%s: %s", strings.ToUpper(level.String()), msg)
 
 	s.output.WriteString(fmt.Sprintf(msg, args...))
 	s.output.WriteString("\n")

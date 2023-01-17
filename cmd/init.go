@@ -5,34 +5,38 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/malyusha/algome/readme"
+	"github.com/urfave/cli/v2"
 )
 
-func initCommand(ctx Context) error {
-	_, err := os.Stat(ctx.configFilepath)
-	if os.IsNotExist(err) {
-		return createConfigFile(ctx)
-	}
+var InitCommand = &cli.Command{
+	Name:        "init",
+	Description: "Initializes project",
+	Action: func(ctx *cli.Context) error {
+		_, err := os.Stat(ctx.String("config"))
+		if os.IsNotExist(err) {
+			return createConfigFile(ctx)
+		}
 
-	if err == nil {
-		return nil
-	}
+		if err == nil {
+			return nil
+		}
 
-	return fmt.Errorf("failed to check config file: %w", err)
+		return fmt.Errorf("failed to check config file: %w", err)
+	},
 }
 
-func createConfigFile(ctx Context) error {
-	file, err := os.Create(ctx.configFilepath)
+func createConfigFile(ctx *cli.Context) error {
+	file, err := os.Create(configPath)
 	if err != nil {
 		return fmt.Errorf("failed to create configuration file: %w", err)
 	}
 
 	enc := json.NewEncoder(file)
 	enc.SetIndent("", "  ")
-	if err := enc.Encode(readme.DefaultConfig); err != nil {
+	if err := enc.Encode(config); err != nil {
 		return fmt.Errorf("failed to encode config to JSON: %w", err)
 	}
 
-	ctx.logger.Info("configuration file successfully created")
+	getLogger(ctx).Info("configuration file successfully created")
 	return nil
 }
